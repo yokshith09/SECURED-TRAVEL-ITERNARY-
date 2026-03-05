@@ -4,7 +4,7 @@
 ![Security Badge](https://img.shields.io/badge/Security-NIST%20Compliant-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![Flask](https://img.shields.io/badge/Flask-2.0%2B-blue)
-![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Atlas-green)
+
 
 An educational demonstration of comprehensive security implementation including authentication, authorization, encryption, hashing, digital signatures, and encoding techniques.
 
