@@ -10,7 +10,7 @@ from datetime import datetime
 # For development/demo, you can use the hardcoded URI below
 
 MONGO_URI = os.getenv('MONGO_URI', 
-    "mongodb+srv://chowdaryk399_db_user:yokshith009@cluster0.4uw4l4z.mongodb.net/?appName=Cluster0"
+    "Paste your MongoDb url here "
 )
 
 # Use certifi for SSL certificate verification
@@ -220,3 +220,4 @@ def create_sample_users():
 
 # Uncomment to create sample users on first run
 # create_sample_users()
+
