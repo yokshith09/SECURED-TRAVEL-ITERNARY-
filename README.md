@@ -105,7 +105,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Set MongoDB connection
-export MONGO_URI="mongodb+srv://username:password@cluster.xxxxx.mongodb.net/?appName=Cluster0"
+export MONGO_URI="mongodburl"
 
 # Run application
 python app.py
