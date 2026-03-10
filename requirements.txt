@@ -4,3 +4,5 @@ certifi==2023.11.17
 cryptography==41.0.7
 qrcode[pil]==7.4.2
 Pillow==10.1.0
+gunicorn==21.2.0
+
