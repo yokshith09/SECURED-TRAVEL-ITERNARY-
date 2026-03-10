@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Travel Itinerary - NIST Compliant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .security-badge {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .security-badge h3 {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .security-badge ul {
+            list-style: none;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .security-badge li {
+            padding: 3px 0;
+        }
+
+        .security-badge li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .otp-input {
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 10px;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Secure Travel Itinerary</h1>
+        <p class="subtitle">NIST SP 800-63-2 Compliant System</p>
+
+        <div class="security-badge">
+            <h3>🛡️ Security Features Implemented</h3>
+            <ul>
+                <li>Multi-Factor Authentication (Password + OTP)</li>
+                <li>Role-Based Access Control (Admin/Traveler/Guest)</li>
+                <li>AES-256 + RSA-2048 Encryption</li>
+                <li>Digital Signatures & Hash-based Integrity</li>
+                <li>QR Code & Base64 Encoding</li>
+            </ul>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alertBox" class="hidden"></div>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginSection" class="form-section active">
+            <h2 style="margin-bottom: 20px;">Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary">🔐 Login (Step 1/2)</button>
+            </form>
+            <div class="links">
+                Don't have an account? <a onclick="showSection('register')">Register here</a>
+            </div>
+        </div>
+
+        <!-- OTP Verification Form -->
+        <div id="otpSection" class="form-section">
+            <h2 style="margin-bottom: 20px;">Verify OTP</h2>
+            <div class="alert alert-info">
+                <strong>Multi-Factor Authentication</strong><br>
+                Enter the 6-digit OTP sent to your email.<br>
+                <small>For demo: Check console (F12) for OTP code</small>
+            </div>
+            <form id="otpForm">
+                <input type="hidden" id="otpEmail">
+                <div class="form-group">
+                    <label for="otpCode">OTP Code</label>
+                    <input type="text" id="otpCode" required maxlength="6" 
+                           class="otp-input" placeholder="000000">
+                </div>
+                <button type="submit" class="btn btn-primary">✓ Verify OTP (Step 2/2)</button>
+                <button type="button" class="btn btn-secondary" onclick="showSection('login')">← Back to Login</button>
+            </form>
+        </div>
+
+        <!-- Registration Form -->
+        <div id="registerSection" class="form-section">
+            <h2 style="margin-bottom: 20px;">Register</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password (min 8 characters)</label>
+                    <input type="password" id="regPassword" required 
+                           placeholder="Strong password" minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="regRole">Account Type</label>
+                    <select id="regRole" required>
+                        <option value="traveler">Traveler (Standard User)</option>
+                        <option value="guest">Guest (View Only)</option>
+                        <option value="admin">Admin (Full Access)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+                <button type="button" class="btn btn-secondary" onclick="showSection('login')">← Back to Login</button>
+            </form>
+        </div>
+
+        <!-- Dashboard (After Login) -->
+        <div id="dashboardSection" class="form-section">
+            <h2 style="margin-bottom: 20px;">Dashboard</h2>
+            <div id="userInfo" class="alert alert-success"></div>
+            
+            <div style="margin: 20px 0;">
+                <button class="btn btn-primary" onclick="window.location.href='/dashboard'">
+                    📊 Open Full Dashboard
+                </button>
+                <button class="btn btn-secondary" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+
+            <div class="security-badge">
+                <h3>✅ Authentication Successful</h3>
+                <ul>
+                    <li>Password verified (SHA-256 + Salt)</li>
+                    <li>OTP verified (Multi-Factor)</li>
+                    <li>Session created (Secure cookie)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility Functions
+        function showSection(section) {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(section + 'Section').classList.add('active');
+            hideAlert();
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.innerHTML = message;
+            alertBox.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').classList.add('hidden');
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        // Registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading();
+
+            const data = {
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                role: document.getElementById('regRole').value
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                hideLoading();
+
+                if (response.ok) {
+                    showAlert(`✓ ${result.message}<br>MFA Enabled: Email OTP will be required at login.`, 'success');
+                    setTimeout(() => showSection('login'), 2000);
+                } else {
+                    showAlert(`✗ ${result.message}`, 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('✗ Registration failed. Please try again.', 'error');
+            }
+        });
+
+        // Login (Step 1)
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading();
+
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                hideLoading();
+
+                if (response.ok && result.require_otp) {
+                    // Move to OTP verification
+                    document.getElementById('otpEmail').value = data.email;
+                    showSection('otp');
+                    showAlert(result.message + '<br>' + result.otp_hint, 'info');
+                } else if (response.ok && result.user) {
+                    // Login complete (no MFA)
+                    showDashboard(result.user);
+                } else {
+                    showAlert(`✗ ${result.message}`, 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('✗ Login failed. Please try again.', 'error');
+            }
+        });
+
+        // OTP Verification (Step 2)
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading();
+
+            const data = {
+                email: document.getElementById('otpEmail').value,
+                otp: document.getElementById('otpCode').value
+            };
+
+            try {
+                const response = await fetch('/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                hideLoading();
+
+                if (response.ok) {
+                    showDashboard(result.user);
+                } else {
+                    showAlert(`✗ ${result.message}`, 'error');
+                }
+            } catch (error) {
+                hideLoading();
+                showAlert('✗ OTP verification failed. Please try again.', 'error');
+            }
+        });
+
+        // Show Dashboard
+        function showDashboard(user) {
+            document.getElementById('userInfo').innerHTML = `
+                <strong>Welcome, ${user.name}!</strong><br>
+                Email: ${user.email}<br>
+                Role: <strong>${user.role.toUpperCase()}</strong>
+            `;
+            showSection('dashboard');
+            showAlert('✓ Login successful! All security checks passed.', 'success');
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                await fetch('/api/logout');
+                showSection('login');
+                showAlert('✓ Logged out successfully', 'info');
+            } catch (error) {
+                showAlert('✗ Logout failed', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
