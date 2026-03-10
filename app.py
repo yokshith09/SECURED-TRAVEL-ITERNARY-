@@ -19,11 +19,12 @@ from bson.objectid import ObjectId
 
 app = Flask(__name__)
 # NIST Requirement: Secure session management with cryptographically secure key
-app.secret_key = os.urandom(24)
+# FIXED (stable across restarts)
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent XSS
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Session expires after 30 minutes
-app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_SECURE'] = True  # Set to True in production with HTTPS
 
 # Initialize database on startup
 initialize_database()
@@ -1113,4 +1114,5 @@ if __name__ == '__main__':
     
     # Run in debug mode for development
     # In production: debug=False, use proper WSGI server
+
     app.run(debug=True, host='0.0.0.0', port=5000)
